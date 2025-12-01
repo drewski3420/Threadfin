@@ -95,14 +95,19 @@ RUN apt-get update && \
     apt-get autoremove --yes && \
     rm -rf /var/cache/apt/archives* /var/lib/apt/lists/*
 
+
 # Copy built binary from builder image
 COPY --from=builder /app/threadfin $THREADFIN_BIN/
 RUN chmod +rx $THREADFIN_BIN/threadfin
 
+RUN chown -R 1000:1001 ./*
+
 # Configure container volume mappings
-VOLUME $THREADFIN_CONF
-VOLUME $THREADFIN_TEMP
+#VOLUME $THREADFIN_CONF
+#VOLUME $THREADFIN_TEMP
 
 EXPOSE $THREADFIN_PORT
+
+
 
 ENTRYPOINT ["sh", "-c", "${THREADFIN_BIN}/threadfin -port=${THREADFIN_PORT} -bind=${THREADFIN_BIND_IP_ADDRESS} -config=${THREADFIN_CONF} -debug=${THREADFIN_DEBUG}"]
